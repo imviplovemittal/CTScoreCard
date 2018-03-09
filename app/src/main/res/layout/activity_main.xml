@@ -80,13 +80,16 @@
             android:layout_height="wrap_content"
             android:id="@+id/marks_recycler_view"
             android:layout_marginTop="5dp"
-            android:nestedScrollingEnabled="false"/>
+            android:nestedScrollingEnabled="false"
+            android:visibility="gone"
+            android:layoutAnimation="@anim/layout_animation_fall_down"/>
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/arrow_up"
             android:layout_gravity="end"
-            android:id="@+id/marks_expandless_button"/>
+            android:id="@+id/marks_expandless_button"
+            android:visibility="gone"/>
     </LinearLayout>
     </android.support.v7.widget.CardView>
 </RelativeLayout>

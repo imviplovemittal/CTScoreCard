@@ -5,16 +5,20 @@ import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.widget.Adapter
+import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import com.github.mikephil.charting.data.Entry
 import kotlinx.android.synthetic.main.activity_main.*
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.formatter.PercentFormatter
-import com.github.mikephil.charting.interfaces.datasets.IPieDataSet
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
+import android.widget.Toast
+import com.github.mikephil.charting.highlight.Highlight
+import kotlinx.android.synthetic.main.ct_maks_bar.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -43,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         marksList.add(SubjectWiseMarks("15CS205J", "Microprocessors", "Theory", subMarksList))
         calculateData(subMarksList, yvalues, xVals)
 
-        val dataSet = PieDataSet(yvalues, "Contribution in Total")
+        val dataSet = PieDataSet(yvalues, "")
         dataSet.setColors(ColorTemplate.JOYFUL_COLORS)
 
         val data = PieData(xVals, dataSet)
@@ -52,13 +56,32 @@ class MainActivity : AppCompatActivity() {
         data.setValueFormatter(PercentFormatter())
         ctChart.animateXY(1400, 1400)
         ctChart.data = data
-        ctChart.setDescription("Sem 4")
+        ctChart.setDescription("")
+        ctChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+
+            override fun onValueSelected(e: Entry?, dataSetIndex: Int, h: Highlight) {
+                // display msg when value selected
+                if (e == null)
+                    return
+
+                marks_recycler_view.visibility = View.VISIBLE
+                marks_expandless_button.visibility = View.VISIBLE
+                runLayoutAnimation(marks_recycler_view)
+
+                /*Toast.makeText(this@MainActivity,
+                        xVals[e.xIndex] + " is " + e.`val` + "", Toast.LENGTH_SHORT).show()*/
+            }
+
+            override fun onNothingSelected() {
+
+            }
+        })
 
         marks_recycler_view.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
 
         marks_recycler_view.adapter = CTScoreAdapter(marksList[0].ctDataArray)
 
-        marksText.setOnClickListener({
+        /*marksText.setOnClickListener({
             if (marks_recycler_view.visibility == View.GONE) {
                 marks_recycler_view.visibility = View.VISIBLE
                 marks_expandless_button.visibility = View.VISIBLE
@@ -66,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                 marks_recycler_view.visibility = View.GONE
                 marks_expandless_button.visibility = View.GONE
             }
-        })
+        })*/
         marks_expandless_button.setOnClickListener({
             marks_recycler_view.visibility = View.GONE
             marks_expandless_button.visibility = View.GONE
@@ -86,5 +109,13 @@ class MainActivity : AppCompatActivity() {
             yValues.add(Entry((subMarksList[i].marksGot / totalMarks) * 100f, i))
             xVals.add(subMarksList[i].testName)
         }
+    }
+    private fun runLayoutAnimation(recyclerView: RecyclerView) {
+        val context = recyclerView.context
+        val controller = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down)
+
+        recyclerView.layoutAnimation = controller
+        recyclerView.adapter.notifyDataSetChanged()
+        recyclerView.scheduleLayoutAnimation()
     }
 }

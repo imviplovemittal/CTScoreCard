@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.widget.RecyclerView
@@ -41,6 +42,16 @@ class CTScoreAdapter(val list : ArrayList<CTData>) : RecyclerView.Adapter<CTScor
             val marksString : String = ""+ctData.marksGot+"/"+ctData.marksOutOf
             itemView.test_name.text = ctData.testName
             itemView.marks.text = marksString
+            var isSelected = 0
+            itemView.ctMarksBar.setOnClickListener({
+                if(isSelected ==0) {
+                    itemView.ctMarksBar.setBackgroundColor(Color.parseColor("#f0f3f4"))
+                    isSelected = 1
+                }else{
+                    itemView.ctMarksBar.setBackgroundColor(Color.parseColor("#ffffff"))
+                    isSelected = 0
+                }
+            })
         }
     }
 
