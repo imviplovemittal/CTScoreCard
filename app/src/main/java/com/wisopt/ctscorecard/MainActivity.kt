@@ -44,11 +44,12 @@ class MainActivity : AppCompatActivity() {
         subMarksList.add(CTData("Q/A", 5f, 5f))
         subMarksList.add(CTData("SURPRIZE TEST", 5f, 5f))
 
-        marksList.add(SubjectWiseMarks("15CS205J", "Microprocessors", "Theory", subMarksList))
+        marksList.add(SubjectWiseMarks("A","15CS205J", "Microprocessors", "Theory", subMarksList))
         calculateData(subMarksList, yvalues, xVals)
 
         val dataSet = PieDataSet(yvalues, "")
-        dataSet.setColors(ColorTemplate.JOYFUL_COLORS)
+        val colorsList : IntArray = intArrayOf(Color.parseColor("#FF5733"),Color.parseColor("#1CFFD6"),Color.parseColor("#1C38FF"),Color.parseColor("#010730"))
+        dataSet.setColors(colorsList)
 
         val data = PieData(xVals, dataSet)
         data.setValueTextSize(10f)
@@ -57,6 +58,7 @@ class MainActivity : AppCompatActivity() {
         ctChart.animateXY(1400, 1400)
         ctChart.data = data
         ctChart.setDescription("")
+        ctChart.setDrawSliceText(false)
         ctChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
 
             override fun onValueSelected(e: Entry?, dataSetIndex: Int, h: Highlight) {
@@ -66,7 +68,7 @@ class MainActivity : AppCompatActivity() {
 
                 marks_recycler_view.visibility = View.VISIBLE
                 marks_expandless_button.visibility = View.VISIBLE
-                runLayoutAnimation(marks_recycler_view)
+                //runLayoutAnimation(marks_recycler_view)
 
                 /*Toast.makeText(this@MainActivity,
                         xVals[e.xIndex] + " is " + e.`val` + "", Toast.LENGTH_SHORT).show()*/
@@ -78,8 +80,9 @@ class MainActivity : AppCompatActivity() {
         })
 
         marks_recycler_view.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-
         marks_recycler_view.adapter = CTScoreAdapter(marksList[0].ctDataArray)
+        subject_recycler_view.layoutManager = LinearLayoutManager(this,LinearLayout.HORIZONTAL,false)
+        subject_recycler_view.adapter = CTSubjectAdapter(marksList)
 
         /*marksText.setOnClickListener({
             if (marks_recycler_view.visibility == View.GONE) {

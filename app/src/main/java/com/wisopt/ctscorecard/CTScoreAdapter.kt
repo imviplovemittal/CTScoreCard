@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.ct_maks_bar.view.*
  * Created by viplo on 09-Mar-18.
  */
 class CTScoreAdapter(val list : ArrayList<CTData>) : RecyclerView.Adapter<CTScoreAdapter.ViewHolder>() {
-    val colorList = listOf(R.color.orange,R.color.yellow,R.color.green,R.color.pink,R.color.orange,R.color.yellow,R.color.green)
+    val colorList = listOf(R.color.aqua,R.color.blue,R.color.dark,R.color.orange)
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent!!.context)
 
