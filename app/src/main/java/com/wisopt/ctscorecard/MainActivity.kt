@@ -2,6 +2,7 @@ package com.wisopt.ctscorecard
 
 import android.content.Context
 import android.graphics.Color
+import android.opengl.Visibility
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -68,6 +69,7 @@ class MainActivity : AppCompatActivity() {
 
                 marks_recycler_view.visibility = View.VISIBLE
                 marks_expandless_button.visibility = View.VISIBLE
+                expand_view.visibility = View.VISIBLE
                 //runLayoutAnimation(marks_recycler_view)
 
                 /*Toast.makeText(this@MainActivity,
@@ -96,6 +98,7 @@ class MainActivity : AppCompatActivity() {
         marks_expandless_button.setOnClickListener({
             marks_recycler_view.visibility = View.GONE
             marks_expandless_button.visibility = View.GONE
+            expand_view.visibility = View.GONE
         })
     }
 
