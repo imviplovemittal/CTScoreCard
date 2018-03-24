@@ -12,15 +12,14 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.formatter.PercentFormatter
-import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.subject_marks_element.view.*
 
-class CTSubjectAdapter(val list : ArrayList<SubjectWiseMarks>,val marksText: TextView, val ctChart : com.github.mikephil.charting.charts.PieChart) : RecyclerView.Adapter<CTSubjectAdapter.ViewHolder>(){
+class CTSubjectAdapter(val list : ArrayList<SubjectWiseMarks>,val marksText: TextView, val ctChart : PieChart,val view :MainView) : RecyclerView.Adapter<CTSubjectAdapter.ViewHolder>(){
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent!!.context)
 
         val feedView = inflater.inflate(R.layout.subject_marks_element, parent, false)
-        val viewholder = CTSubjectAdapter.ViewHolder(feedView)
+        val viewholder = CTSubjectAdapter.ViewHolder(feedView, view)
 
         return viewholder
     }
@@ -33,13 +32,13 @@ class CTSubjectAdapter(val list : ArrayList<SubjectWiseMarks>,val marksText: Tex
         holder?.bindData(list[position])
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+    class ViewHolder(itemView: View,val view: MainView) : RecyclerView.ViewHolder(itemView){
         fun bindData(subMarks : SubjectWiseMarks){
             itemView.marks_slot_name.text = subMarks.subSlot
             itemView.marks_sub_name.text = subMarks.subCode
             var cardSelected = 0
             itemView.sub_selector_card.setOnClickListener {
-                //0onClickSetData(itemView)
+                onClickSetData(itemView)
                 if(cardSelected == 0){
                     itemView.marks_slot_name.setBackgroundResource(R.drawable.subject_background_color_dark)
                     itemView.marks_sub_name.setBackgroundResource(R.drawable.slot_background_dark)
@@ -56,40 +55,14 @@ class CTSubjectAdapter(val list : ArrayList<SubjectWiseMarks>,val marksText: Tex
                 }
             }
         }
-    }
-    fun onClickSetData(itemView:View) {
-        for (element in MainActivity.statified.marksList) {
-            Log.d("", element.subSlot)
-            if (element.subSlot.equals(itemView.marks_slot_name.text)) {
-                val yvalues = ArrayList<Entry>()
-                val xvals = ArrayList<String>()
-                var totalMarksGot = 0.0
-                var totalMarks = 0f
-                for (test in element.ctDataArray) {
-                    totalMarksGot += test.marksGot
-                    totalMarks += test.marksOutOf
+        fun onClickSetData(itemView:View) {
+            for (element in MainActivity.statified.marksList) {
+                Log.d("", element.subSlot)
+                if (element.subSlot.equals(itemView.marks_slot_name.text)) {
+                    view.updateView(element)
                 }
-                val marksString = "" + totalMarksGot + "/" + totalMarks
-                for (i in 0..element.ctDataArray.size - 1) {
-                    yvalues.add(Entry((element.ctDataArray[i].marksGot / totalMarks) * 100f, i))
-                    xvals.add(element.ctDataArray[i].testName)
-                }
-                marksText.text = marksString
-                val dataSet = PieDataSet(yvalues, "")
-                val colorsList: IntArray = intArrayOf(Color.parseColor("#FF5733"), Color.parseColor("#1CFFD6"), Color.parseColor("#1C38FF"), Color.parseColor("#010730"))
-                dataSet.setColors(colorsList)
-
-                val data = PieData(xvals, dataSet)
-                data.setValueTextSize(0f)
-                //data.setValueTextColor(Color.WHITE)
-                data.setValueFormatter(PercentFormatter())
-                ctChart.animateXY(1400, 1400)
-                ctChart.data = data
-                ctChart.setDescription("")
-                ctChart.setDrawSliceText(false)
-                ctChart.elevation = 0f
-                ctChart.setTouchEnabled(false)
             }
-        }
+    }
+
     }
 }

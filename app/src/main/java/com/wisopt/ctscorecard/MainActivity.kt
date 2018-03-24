@@ -26,7 +26,7 @@ import com.wisopt.ctscorecard.R.id.marksText
 import kotlinx.android.synthetic.main.ct_maks_bar.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MainView {
 
     object statified {
         var mContext: Context? = null
@@ -60,19 +60,6 @@ class MainActivity : AppCompatActivity() {
         marksText.text = calculateData(subMarksList, yvalues!!, xvals!!)
 
         setChartData()
-
-        /*ctChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
-
-            override fun onValueSelected(e: Entry?, dataSetIndex: Int, h: Highlight) {
-                if (e == null)
-                    return
-                marks_recycler_view.visibility = View.VISIBLE
-                marks_expandless_button.visibility = View.VISIBLE
-                expand_view.visibility = View.VISIBLE
-            }
-
-            override fun onNothingSelected() {}
-        })*/
         ctChart.setOnClickListener {
             marks_recycler_view.visibility = View.VISIBLE
             marks_expandless_button.visibility = View.VISIBLE
@@ -82,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         marks_recycler_view.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         marks_recycler_view.adapter = CTScoreAdapter(marksList[0].ctDataArray)
         subject_recycler_view.layoutManager = LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
-        subject_recycler_view.adapter = CTSubjectAdapter(marksList,marksText,ctChart)
+        subject_recycler_view.adapter = CTSubjectAdapter(marksList,marksText,ctChart,this)
         marks_expandless_button.setOnClickListener({
             marks_recycler_view.visibility = View.GONE
             marks_expandless_button.visibility = View.GONE
@@ -128,5 +115,36 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutAnimation = controller
         recyclerView.adapter.notifyDataSetChanged()
         recyclerView.scheduleLayoutAnimation()
+    }
+
+    override fun updateView(element:SubjectWiseMarks) {
+        val yvalues = ArrayList<Entry>()
+        val xvals = ArrayList<String>()
+        var totalMarksGot = 0.0
+        var totalMarks = 0f
+        for (test in element.ctDataArray) {
+            totalMarksGot += test.marksGot
+            totalMarks += test.marksOutOf
+        }
+        val marksString = "" + totalMarksGot + "/" + totalMarks
+        for (i in 0..element.ctDataArray.size - 1) {
+            yvalues.add(Entry((element.ctDataArray[i].marksGot / totalMarks) * 100f, i))
+            xvals.add(element.ctDataArray[i].testName)
+        }
+        marksText.text = marksString
+        val dataSet = PieDataSet(yvalues, "")
+        val colorsList: IntArray = intArrayOf(Color.parseColor("#FF5733"), Color.parseColor("#1CFFD6"), Color.parseColor("#1C38FF"), Color.parseColor("#010730"))
+        dataSet.setColors(colorsList)
+
+        val data = PieData(xvals, dataSet)
+        data.setValueTextSize(0f)
+        //data.setValueTextColor(Color.WHITE)
+        data.setValueFormatter(PercentFormatter())
+        ctChart.animateXY(1400, 1400)
+        ctChart.data = data
+        ctChart.setDescription("")
+        ctChart.setDrawSliceText(false)
+        ctChart.elevation = 0f
+        ctChart.setTouchEnabled(false)
     }
 }
